@@ -2,17 +2,14 @@ import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 const prisma = new PrismaClient();
 
 export class OrganizerController {
  async index(req: Request, res: Response) {
   try {
    const organizers = await prisma.organizer.findMany();
-   return res.status(200).send({
-    message: "Organizer list",
-    status: "success",
-    data: organizers,
-   });
+   return res.status(201).json(organizers);
   } catch (error) {
    console.log(error);
     return res.status(500).json({ message: "Internal server Error" });
@@ -30,11 +27,7 @@ export class OrganizerController {
      password: hashedPassword,
     },
    });
-   return res.status(201).send({
-    message: "Organizer created",
-    status: "success",
-    data: organizer,
-   });
+   return res.status(201).json(organizer);
   } catch (error) {
    console.log(error);
    return res.status(500).json({ message: "Internal server Error" });
@@ -58,12 +51,7 @@ export class OrganizerController {
    }
    const secretKey = process.env.SECRET_KEY;
    const token = jwt.sign({ email }, secretKey!, { expiresIn: '1h' });
-   return res.status(200).send({
-    message: "Login success",
-    status: "success",
-    data: organizer,
-    token,
-   });
+   return res.status(201).json(token);
   } catch (error) {
    console.log(error);
    return res.status(500).json({ message: "Internal server Error" });
@@ -72,7 +60,7 @@ export class OrganizerController {
 
  async bio(req: Request, res: Response) { 
   const id = req.params.organizerId;
-  const { phone, manager,  address, about, url, sosmed } = req.body;
+  const { phone, address, about, url, sosmed } = req.body;
   try {
    const organizer = await prisma.organizer.update({
     where: {
@@ -80,7 +68,6 @@ export class OrganizerController {
     },
     data: {
      phone,
-     manager,
      address,
      about,
      url,
@@ -93,24 +80,5 @@ export class OrganizerController {
    return res.status(500).json({ message: "Internal server Error" });
   }
  }
-
-  async show(req: Request, res: Response) {
-    const id = req.params.organizerId;
-    try {
-    const organizer = await prisma.organizer.findUnique({
-      where: {
-      id: Number(id),
-      },
-    });
-    return res.status(200).send({
-      message: "Organizer detail",
-      status: "success",
-      data: organizer,
-    });
-    } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: "Internal server Error" });
-    }
-  }
  
 }

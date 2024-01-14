@@ -8,10 +8,9 @@ const routes = express.Router();
 
 export const organizerRouter = () => {
   routes.get('/', organizerController.index);
-  routes.get('/:organizerId', organizerController.show);
   routes.post('/login', organizerController.login);
   routes.post('/register', organizerController.register);
   routes.use('/bio/:organizerId', checkAuthMiddleware);
-  routes.put('/bio/:organizerId', organizerController.bio);
+  routes.post('/bio/:organizerId', organizerController.bio);
   return routes;
 }
