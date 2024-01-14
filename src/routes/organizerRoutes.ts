@@ -1,14 +1,13 @@
 import { PrismaClient } from "@prisma/client";
-import express, {Request, Response} from "express";
+import express from "express";
+import { OrganizerController } from "../controllers/organizerController";
 
-const prisma = new PrismaClient();
+const organizerController = new OrganizerController();
 
 const routes = express.Router();
 
 export const organizerRouter = () => {
-  routes.get('/', async (req: Request, res: Response) => {
-      const organizers = await prisma.organizer.findMany();
-      res.json(organizers);
-  });
+  routes.get('/', organizerController.index);
+  routes.post('/register', organizerController.register);
   return routes;
 }
