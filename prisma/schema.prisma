@@ -22,4 +22,22 @@ model Organizer {
   url       String?
   sosmed    Json?
   createdAt DateTime @default(now())
+  Event     Event[]
+}
+
+model Event {
+  id           Int       @id @default(autoincrement())
+  name         String
+  description  String?
+  banner       String?
+  artists      String?
+  organizerId  Int
+  locationName String?
+  locationUrl  String?
+  dateStart    DateTime? @default(now()) @db.Date
+  dateEnd      DateTime? @default(now()) @db.Date
+  timeStart    DateTime? @default(now()) @db.Time
+  timeEnd      DateTime? @default(now()) @db.Time
+  organizer    Organizer @relation(fields: [organizerId], references: [id])
+  createdAt    DateTime  @default(now())
 }
