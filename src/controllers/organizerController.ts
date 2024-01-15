@@ -57,7 +57,7 @@ export class OrganizerController {
     return res.status(401).json({ status: "Failed", message: "Invalid credentials" });
    }
    const secretKey = process.env.SECRET_KEY;
-   const token = jwt.sign({ email }, secretKey!, { expiresIn: '1h' });
+   const token = jwt.sign({ email, id: organizer.id, name: organizer.name }, secretKey!, { expiresIn: '1h' });
    return res.status(201).json({
     status: "success",
     message: "Login success",
