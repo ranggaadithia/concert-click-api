@@ -24,7 +24,7 @@ export class EventController {
  }
 
  async create(req: Request, res: Response) {
-  const { name, description, banner, artists, locationName, locationUrl, dateStart, dateEnd, timeStart, timeEnd } = req.body;
+  const { name, description, artists, locationName, locationUrl, dateStart, dateEnd, timeStart, timeEnd } = req.body;
   try {
    const organizerId = req.body.user.id; // auth user
    const banner = req?.file?.filename;
