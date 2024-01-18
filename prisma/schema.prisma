@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DB_URL")
+}
+
+model Organizer {
+  id        Int      @id @default(autoincrement())
+  name      String
+  manager   String?
+  email     String
+  password  String
+  phone     String?
+  address   String?
+  about     String?
+  url       String?
+  sosmed    Json?
+  createdAt DateTime @default(now())
+  Event     Event[]
+}
+
+model Event {
+  id           Int       @id @default(autoincrement())
+  name         String
+  description  String?
+  banner       String?
+  artists      String?
+  organizerId  Int
+  locationName String?
+  locationUrl  String?
+  dateStart    DateTime? @default(now()) @db.Date
+  dateEnd      DateTime? @default(now()) @db.Date
+  timeStart    DateTime? @default(now()) @db.Time
+  timeEnd      DateTime? @default(now()) @db.Time
+  organizer    Organizer @relation(fields: [organizerId], references: [id])
+  createdAt    DateTime  @default(now())
+  Ticket       Ticket[]
+}
+
+model Ticket {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  price       Int
+  status      StatusTicket @default(AVAILABLE)
+  eventId     Int
+  startSale   DateTime     @default(now())
+  endSale     DateTime
+  Event       Event        @relation(fields: [eventId], references: [id])
+  createdAt   DateTime     @default(now())
+}
+
+enum StatusTicket {
+  AVAILABLE
+  SOLD_OUT
+  CLOSED
+}
