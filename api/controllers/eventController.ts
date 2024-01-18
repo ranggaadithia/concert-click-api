@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
+import fs from "fs";
 const prisma = new PrismaClient();
 
 export class EventController {
@@ -46,6 +47,31 @@ export class EventController {
    return res.status(201).json({
     status: 'success',
     message: 'Event created',
+    data: event
+   });
+  } catch (err) {
+   console.log(err);
+   res.status(500).json({
+    status: 'error',
+    message: err
+   });
+  }
+ }
+
+ async delete(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+   const event = await prisma.event.delete({
+    where: {
+     id: Number(id)
+    }
+   });
+   if (event.banner) {
+    fs.unlinkSync(`./banners/${event.banner}`);
+   }
+   return res.status(200).json({
+    status: 'success',
+    message: 'Event deleted',
     data: event
    });
   } catch (err) {
