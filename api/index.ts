@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import { organizerRouter } from './routes/organizerRoutes';
 import { eventRouter } from './routes/eventRoutes';
+import { ticketRouter } from './routes/ticketRoutes';
 
 const app = express();
 app.use(express.json());
@@ -17,6 +18,8 @@ app.get('/', (req: Request, res: Response) => {
 app.use(express.static('banners'))
 app.use('/organizer', organizerRouter());
 app.use('/event', eventRouter());
+app.use('/ticket', ticketRouter());
+
 
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

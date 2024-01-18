@@ -48,10 +48,11 @@ model Ticket {
   name        String
   description String?
   price       Int
+  stock       Int
   status      StatusTicket @default(AVAILABLE)
   eventId     Int
-  startSale   DateTime     @default(now())
-  endSale     DateTime
+  startSale   DateTime     @default(now()) @db.DateTime()
+  endSale     DateTime?    @default(now()) @db.DateTime()
   Event       Event        @relation(fields: [eventId], references: [id])
   createdAt   DateTime     @default(now())
 }
