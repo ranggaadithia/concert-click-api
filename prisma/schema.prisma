@@ -40,4 +40,24 @@ model Event {
   timeEnd      DateTime? @default(now()) @db.Time
   organizer    Organizer @relation(fields: [organizerId], references: [id])
   createdAt    DateTime  @default(now())
+  Ticket       Ticket[]
+}
+
+model Ticket {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String?
+  price       Int
+  status      StatusTicket @default(AVAILABLE)
+  eventId     Int
+  startSale   DateTime     @default(now()) @db.DateTime()
+  endSale     DateTime     @db.DateTime()
+  Event       Event        @relation(fields: [eventId], references: [id])
+  createdAt   DateTime     @default(now())
+}
+
+enum StatusTicket {
+  AVAILABLE
+  SOLD_OUT
+  CLOSED
 }
