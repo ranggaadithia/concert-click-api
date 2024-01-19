@@ -44,17 +44,18 @@ model Event {
 }
 
 model Ticket {
-  id          Int          @id @default(autoincrement())
-  name        String
-  description String?
-  price       Int
-  stock       Int
-  status      StatusTicket @default(AVAILABLE)
-  eventId     Int
-  startSale   DateTime     @default(now()) @db.DateTime()
-  endSale     DateTime?    @default(now()) @db.DateTime()
-  Event       Event        @relation(fields: [eventId], references: [id])
-  createdAt   DateTime     @default(now())
+  id             Int              @id @default(autoincrement())
+  name           String
+  description    String?
+  price          Int
+  stock          Int
+  status         StatusTicket     @default(AVAILABLE)
+  eventId        Int
+  startSale      DateTime         @default(now()) @db.DateTime()
+  endSale        DateTime?        @default(now()) @db.DateTime()
+  Event          Event            @relation(fields: [eventId], references: [id])
+  createdAt      DateTime         @default(now())
+  TicketPurchase TicketPurchase[]
 }
 
 enum StatusTicket {
@@ -64,17 +65,29 @@ enum StatusTicket {
 }
 
 model Purchaser {
-  id        Int      @id @default(autoincrement())
-  firstName String
-  lastName  String
-  email     String
-  phone     String?
-  nik       String?
-  birthdate DateTime @db.Date()
-  gender    Gender
+  id             Int              @id @default(autoincrement())
+  firstName      String
+  lastName       String
+  email          String
+  phone          String?
+  nik            String?
+  birthdate      DateTime         @db.Date()
+  gender         Gender
+  TicketPurchase TicketPurchase[]
 }
 
 enum Gender {
   MALE
   FEMALE
+}
+
+model TicketPurchase {
+  id          Int       @id @default(autoincrement())
+  purchaserId Int
+  ticketId    Int
+  quantity    Int
+  totalPrice  Int
+  Purchaser   Purchaser @relation(fields: [purchaserId], references: [id])
+  Ticket      Ticket    @relation(fields: [ticketId], references: [id])
+  createdAt   DateTime  @default(now())
 }
