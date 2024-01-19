@@ -62,3 +62,19 @@ enum StatusTicket {
   SOLD_OUT
   CLOSED
 }
+
+model Purchaser {
+  id        Int      @id @default(autoincrement())
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+  nik       String?
+  birthdate DateTime @db.Date()
+  gender    Gender
+}
+
+enum Gender {
+  MALE
+  FEMALE
+}

@@ -8,9 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventController = void 0;
 const client_1 = require("@prisma/client");
+const fs_1 = __importDefault(require("fs"));
 const prisma = new client_1.PrismaClient();
 class EventController {
     index(req, res) {
@@ -37,7 +41,7 @@ class EventController {
     create(req, res) {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, description, banner, artists, locationName, locationUrl, dateStart, dateEnd, timeStart, timeEnd } = req.body;
+            const { name, description, artists, locationName, locationUrl, dateStart, dateEnd, timeStart, timeEnd } = req.body;
             try {
                 const organizerId = req.body.user.id; // auth user
                 const banner = (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.filename;
@@ -59,6 +63,33 @@ class EventController {
                 return res.status(201).json({
                     status: 'success',
                     message: 'Event created',
+                    data: event
+                });
+            }
+            catch (err) {
+                console.log(err);
+                res.status(500).json({
+                    status: 'error',
+                    message: err
+                });
+            }
+        });
+    }
+    delete(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { id } = req.params;
+            try {
+                const event = yield prisma.event.delete({
+                    where: {
+                        id: Number(id)
+                    }
+                });
+                if (event.banner) {
+                    fs_1.default.unlinkSync(`./banners/${event.banner}`);
+                }
+                return res.status(200).json({
+                    status: 'success',
+                    message: 'Event deleted',
                     data: event
                 });
             }

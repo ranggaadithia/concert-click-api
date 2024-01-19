@@ -13,6 +13,7 @@ const routes = express_1.default.Router();
 const eventRouter = () => {
     routes.get('/', checkAuthMiddleware_1.checkAuthMiddleware, eventController.index);
     routes.post('/', uploadFile_1.upload.single('banner'), checkAuthMiddleware_1.checkAuthMiddleware, eventController.create);
+    routes.delete('/:id', checkAuthMiddleware_1.checkAuthMiddleware, eventController.delete);
     return routes;
 };
 exports.eventRouter = eventRouter;

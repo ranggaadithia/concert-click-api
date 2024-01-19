@@ -2,6 +2,7 @@ import express, { Request, Response } from 'express';
 import { organizerRouter } from './routes/organizerRoutes';
 import { eventRouter } from './routes/eventRoutes';
 import { ticketRouter } from './routes/ticketRoutes';
+import { purchaserRouter } from './routes/purchaserRoutes';
 
 const app = express();
 app.use(express.json());
@@ -19,6 +20,7 @@ app.use(express.static('banners'))
 app.use('/organizer', organizerRouter());
 app.use('/event', eventRouter());
 app.use('/ticket', ticketRouter());
+app.use('/purchaser', purchaserRouter());
 
 
 
