@@ -8,6 +8,5 @@ const ticketPurchaseController = new TicketPurchaseController();
 export const ticketPurchaseRoutes = () => {
 
   router.post('/ticket/:ticketId', checkPurchaser, ticketPurchaseController.createTicketPurchase);
-
   return router;
 }
