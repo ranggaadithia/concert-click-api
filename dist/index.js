@@ -36,13 +36,44 @@ app.get('/test', (req, res) => {
     console.log('test application success to running');
     res.send('test');
 });
-app.post('/notification', (req, res, notificationJson) => {
-    apiClient.transaction.notification(notificationJson)
+app.post('/notification', (req, res) => {
+    apiClient.transaction.notification()
         .then((statusResponse) => {
         let orderId = statusResponse.order_id;
         let transactionStatus = statusResponse.transaction_status;
         let fraudStatus = statusResponse.fraud_status;
         console.log(`Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`);
+        if (transactionStatus == 'capture') {
+            if (fraudStatus == 'accept') {
+                // TODO set transaction status on your database to 'success'
+                console.log('success');
+                // and response with 200 OK
+                res.status(200).send('OK');
+            }
+        }
+        else if (transactionStatus == 'settlement') {
+            // TODO set transaction status on your database to 'success'
+            // and response with 200 OK
+            console.log('settlement');
+            // and response with 200 OK
+            res.status(200).send('OK');
+        }
+        else if (transactionStatus == 'cancel' ||
+            transactionStatus == 'deny' ||
+            transactionStatus == 'expire') {
+            // TODO set transaction status on your database to 'failure'
+            // and response with 200 OK
+            console.log('failure');
+            // and response with 200 OK
+            res.status(200).send('failure');
+        }
+        else if (transactionStatus == 'pending') {
+            // TODO set transaction status on your database to 'pending' / waiting payment
+            // and response with 200 OK
+            console.log('pending');
+            // and response with 200 OK
+            res.status(200).send('pending');
+        }
     });
 });
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
