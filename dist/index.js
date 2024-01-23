@@ -12,11 +12,6 @@ const ticketPurchaseRoutes_1 = require("./routes/ticketPurchaseRoutes");
 const midtransClient = require('midtrans-client');
 const app = (0, express_1.default)();
 // Create Core API / Snap instance (both have shared `transactions` methods)
-let apiClient = new midtransClient.Snap({
-    isProduction: false,
-    serverKey: process.env.MIDTRANS_SERVER_KEY,
-    clientKey: process.env.MIDTRANS_CLIENT_KEY
-});
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
@@ -36,8 +31,14 @@ app.get('/test', (req, res) => {
     console.log('test application success to running');
     res.send('test');
 });
+let apiClient = new midtransClient.Snap({
+    isProduction: false,
+    serverKey: process.env.MIDTRANS_SERVER_KEY,
+    clientKey: process.env.MIDTRANS_CLIENT_KEY
+});
 app.post('/notification', (req, res) => {
-    apiClient.transaction.notification()
+    const notificationJson = req.body; // Assuming notification data is in the request body
+    apiClient.transaction.notification(notificationJson)
         .then((statusResponse) => {
         let orderId = statusResponse.order_id;
         let transactionStatus = statusResponse.transaction_status;
@@ -55,7 +56,6 @@ app.post('/notification', (req, res) => {
             // TODO set transaction status on your database to 'success'
             // and response with 200 OK
             console.log('settlement');
-            // and response with 200 OK
             res.status(200).send('OK');
         }
         else if (transactionStatus == 'cancel' ||
@@ -64,16 +64,18 @@ app.post('/notification', (req, res) => {
             // TODO set transaction status on your database to 'failure'
             // and response with 200 OK
             console.log('failure');
-            // and response with 200 OK
             res.status(200).send('failure');
         }
         else if (transactionStatus == 'pending') {
             // TODO set transaction status on your database to 'pending' / waiting payment
             // and response with 200 OK
             console.log('pending');
-            // and response with 200 OK
             res.status(200).send('pending');
         }
+    })
+        .catch((error) => {
+        console.error('Error processing notification:', error);
+        res.status(500).send('Internal Server Error');
     });
 });
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
