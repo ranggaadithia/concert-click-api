@@ -8,6 +8,7 @@ const prisma = new PrismaClient();
 export class TicketPurchaseController {
   async createTicketPurchase(req: Request, res: Response) {
     const purchaserId  = req.body.purchaser.id;
+    const id = uuidv4();
     const {quantity, ticketId} = req.body;
 
     const ticket = await prisma.ticket.findUnique({
@@ -25,6 +26,7 @@ export class TicketPurchaseController {
     try {
       const TicketPurchase = await prisma.ticketPurchase.create({
         data: {
+          id: String(id),
           purchaserId,
           ticketId,
           quantity,
@@ -37,7 +39,7 @@ export class TicketPurchaseController {
       console.log(err);
     }
   }
-  async getUserTicket(req: Request, res: Response) {
+  async Ewallet(req: Request, res: Response) {
     const userId = req.params.userId;  
     const purchaser = await prisma.purchaser.findUnique({
       where: {
@@ -71,7 +73,7 @@ export class TicketPurchaseController {
       "payment_type": "gopay",
       "transaction_details": {
           "gross_amount": totalAmount,
-          "order_id": `concert-click-${uuidv4()}`,
+          "order_id": data[0].id,
       },
       "gopay": {
           "enable_callback": true,                
@@ -96,7 +98,6 @@ export class TicketPurchaseController {
         return res.json(chargeResponse)
     });
   
-    // return res.json({ purchaser, data, totalAmount });
   }
 
 }
