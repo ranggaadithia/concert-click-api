@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DB_URL")
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model Organizer {
@@ -51,8 +52,8 @@ model Ticket {
   stock          Int
   status         StatusTicket     @default(AVAILABLE)
   eventId        Int
-  startSale      DateTime         @default(now()) @db.DateTime()
-  endSale        DateTime?        @default(now()) @db.DateTime()
+  startSale      DateTime         @default(now()) //@db.DateTime()
+  endSale        DateTime?        @default(now()) //@db.DateTime()
   Event          Event            @relation(fields: [eventId], references: [id])
   createdAt      DateTime         @default(now())
   TicketPurchase TicketPurchase[]
