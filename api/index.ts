@@ -9,10 +9,10 @@ const midtransClient = require('midtrans-client');
 const app = express();
 // Create Core API / Snap instance (both have shared `transactions` methods)
 let apiClient = new midtransClient.Snap({
-        isProduction : false,
-        serverKey : 'YOUR_SERVER_KEY',
-        clientKey : 'YOUR_CLIENT_KEY'
-    });
+  isProduction : false,
+  serverKey : process.env.MIDTRANS_SERVER_KEY,
+  clientKey : process.env.MIDTRANS_CLIENT_KEY
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
