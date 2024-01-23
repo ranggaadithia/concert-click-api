@@ -9,6 +9,6 @@ export const ticketPurchaseRoutes = () => {
 
   router.post('/', checkPurchaser, ticketPurchaseController.createTicketPurchase);
 
-  router.get('/gopay/:userId', ticketPurchaseController.getUserTicket);
+  router.get('/e-wallet/:userId', ticketPurchaseController.Ewallet);
   return router;
 }

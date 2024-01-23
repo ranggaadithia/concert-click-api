@@ -82,12 +82,20 @@ enum Gender {
 }
 
 model TicketPurchase {
-  id          Int       @id @default(autoincrement())
-  purchaserId Int
-  ticketId    Int
-  quantity    Int
-  totalPrice  Int
-  Purchaser   Purchaser @relation(fields: [purchaserId], references: [id])
-  Ticket      Ticket    @relation(fields: [ticketId], references: [id])
-  createdAt   DateTime  @default(now())
+  id                String            @id @default(uuid())
+  purchaserId       Int
+  ticketId          Int
+  quantity          Int
+  totalPrice        Int
+  paymentType       String?
+  transactionStatus TransactionStatus @default(PENDING)
+  Purchaser         Purchaser         @relation(fields: [purchaserId], references: [id])
+  Ticket            Ticket            @relation(fields: [ticketId], references: [id])
+  createdAt         DateTime          @default(now())
+}
+
+enum TransactionStatus {
+  PENDING
+  SUCCESS
+  FAILED
 }
