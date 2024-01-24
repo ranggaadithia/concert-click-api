@@ -40,39 +40,21 @@ export class TicketPurchaseController {
     }
   }
   async Ewallet(req: Request, res: Response) {
-    const userId = req.params.userId;  
-    const purchaser = await prisma.purchaser.findUnique({
-      where: {
-        id: Number(userId),
-      }, select: {
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-      }
-    });
+    const ticketPurchaseId = req.params.ticketPurchaseId;  
     const data = await prisma.ticketPurchase.findMany({
       where: {
-        purchaserId: Number(userId),
+        id: ticketPurchaseId,
       },
       include: {
-        Ticket: {
-          select: {
-            name: true, 
-            price: true
-          },
-        },
+        Ticket: true,
+        Purchaser: true,
       }
     });
-
-    const totalAmount = data.reduce((acc, curr) => {
-      return acc + curr.totalPrice;
-    }, 0);
 
     let parameter = {
       "payment_type": "gopay",
       "transaction_details": {
-          "gross_amount": totalAmount,
+          "gross_amount": data[0].totalPrice,
           "order_id": data[0].id,
       },
       "gopay": {
@@ -85,12 +67,12 @@ export class TicketPurchaseController {
         "quantity": item.quantity,
         "name": item.Ticket.name,
       })),
-      "customer_details": {
-          "first_name": purchaser!.firstName,
-          "last_name": purchaser!.lastName,
-          "email": purchaser!.email,
-          "phone": purchaser!.phone,
-      },
+      "customer_details": data.map(item => ({
+        "first_name": item.Purchaser.firstName,
+        "last_name": item.Purchaser.lastName,
+        "email": item.Purchaser.email,
+        "phone": item.Purchaser.phone,
+      })),
     };
 
     core.charge(parameter)

@@ -25,7 +25,7 @@ app.use('/organizer', (0, organizerRoutes_1.organizerRouter)());
 app.use('/event', (0, eventRoutes_1.eventRouter)());
 app.use('/ticket', (0, ticketRoutes_1.ticketRouter)());
 app.use('/buyer', (0, purchaserRoutes_1.purchaserRouter)());
-app.use('/pay', (0, ticketPurchaseRoutes_1.ticketPurchaseRoutes)());
+app.use('/buy', (0, ticketPurchaseRoutes_1.ticketPurchaseRoutes)());
 app.use('/notification', (0, paymentNotifRoutes_1.paymentNotificationRoutes)());
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
 //# sourceMappingURL=index.js.map

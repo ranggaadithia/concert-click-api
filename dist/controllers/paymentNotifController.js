@@ -25,7 +25,6 @@ class PaymentNotifController {
             apiClient.transaction.notification(notificationJson)
                 .then((statusResponse) => __awaiter(this, void 0, void 0, function* () {
                 let { order_id, transaction_status, fraud_status, payment_type } = statusResponse;
-                console.log(`Transaction notification received. Order ID: ${order_id}. Transaction status: ${transaction_status}. Fraud status: ${fraud_status}. Payment Type: ${payment_type}`);
                 const ticketPurchase = yield prisma.ticketPurchase.findUnique({
                     where: { id: order_id }
                 });

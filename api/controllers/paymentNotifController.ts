@@ -49,21 +49,25 @@ notification: (req: Request, res: Response) => Promise<void> = async (req, res) 
 
       let { order_id, transaction_status, fraud_status, payment_type } = statusResponse;
 
-      console.log(`Transaction notification received. Order ID: ${order_id}. Transaction status: ${transaction_status}. Fraud status: ${fraud_status}. Payment Type: ${payment_type}`);
-
       const ticketPurchase = await prisma.ticketPurchase.findUnique({
         where: { id: order_id }
       });
 
       if (transaction_status == 'capture' && fraud_status == 'accept') {
         await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "SUCCESS", res);
-      } else if (transaction_status == 'settlement') {
+      }
+      
+      else if (transaction_status == 'settlement') {
         await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "SUCCESS", res);
-      } else if (transaction_status == 'cancel' ||
+      } 
+      
+      else if (transaction_status == 'cancel' ||
         transaction_status == 'deny' ||
         transaction_status == 'expire') {
           await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "FAILED", res);
-      } else if (transaction_status == 'pending') {
+      } 
+      
+      else if (transaction_status == 'pending') {
         await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "PENDING", res);
       } 
     })

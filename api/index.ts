@@ -24,7 +24,7 @@ app.use('/organizer', organizerRouter());
 app.use('/event', eventRouter());
 app.use('/ticket', ticketRouter());
 app.use('/buyer', purchaserRouter());
-app.use('/pay', ticketPurchaseRoutes());
+app.use('/buy', ticketPurchaseRoutes());
 app.use('/notification', paymentNotificationRoutes());
 
 
