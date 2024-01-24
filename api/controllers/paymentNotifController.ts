@@ -50,6 +50,7 @@ export class PaymentNotifController {
             console.error('Error updating transaction status:', error);
             res.status(500).send('Internal Server Error');
           }
+      return res.status(200).send('Ok');
       } else if (transaction_status == 'settlement') {
         try {
           await prisma.ticketPurchase.update({
@@ -73,6 +74,7 @@ export class PaymentNotifController {
             console.error('Error updating transaction status:', error);
             res.status(500).send('Internal Server Error');
           }
+        return res.status(200).send('Ok');
       } else if (transaction_status == 'cancel' ||
         transaction_status == 'deny' ||
         transaction_status == 'expire') {
@@ -89,6 +91,7 @@ export class PaymentNotifController {
               console.error('Error updating transaction status:', error);
               res.status(500).send('Internal Server Error');
             }
+        return res.status(200).send('Ok');
       } else if (transaction_status == 'pending') {
         try {
           await prisma.ticketPurchase.update({
@@ -103,10 +106,8 @@ export class PaymentNotifController {
             console.error('Error updating transaction status:', error);
             res.status(500).send('Internal Server Error');
           }
-      } else {
-        console.log(`Unhandled transaction status: ${transaction_status}`);
-        res.status(400).send('Invalid transaction status.');
-      }
+          return res.status(200).send('Ok');
+      } 
     })
     .catch((error: any) => {
       console.error('Error processing notification:', error);
