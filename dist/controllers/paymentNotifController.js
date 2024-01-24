@@ -19,34 +19,8 @@ let apiClient = new midtransClient.Snap({
 });
 const prisma = new client_1.PrismaClient();
 class PaymentNotifController {
-    updateTransactionStatus(ticketPurchaseId, ticketId, quantity, paymentType, transactionStatus, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            try {
-                yield prisma.ticketPurchase.update({
-                    where: { id: ticketPurchaseId },
-                    data: {
-                        paymentType: paymentType,
-                        transactionStatus: transactionStatus,
-                    },
-                });
-                if (transactionStatus == 'SUCCESS')
-                    yield prisma.ticket.update({
-                        where: { id: ticketId },
-                        data: {
-                            stock: {
-                                decrement: quantity,
-                            },
-                        },
-                    });
-            }
-            catch (error) {
-                console.error('Error updating transaction status:', error);
-                res.status(500).send('Internal Server Error');
-            }
-        });
-    }
-    notification(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
+    constructor() {
+        this.notification = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const notificationJson = req.body;
             apiClient.transaction.notification(notificationJson)
                 .then((statusResponse) => __awaiter(this, void 0, void 0, function* () {
@@ -73,11 +47,37 @@ class PaymentNotifController {
                     console.log(`Unhandled transaction status: ${transaction_status}`);
                     res.status(400).send('Invalid transaction status.');
                 }
-            })).bind(this)
+            }))
                 .catch((error) => {
                 console.error('Error processing notification:', error);
                 res.status(500).send('Internal Server Error');
             });
+        });
+    }
+    updateTransactionStatus(ticketPurchaseId, ticketId, quantity, paymentType, transactionStatus, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield prisma.ticketPurchase.update({
+                    where: { id: ticketPurchaseId },
+                    data: {
+                        paymentType: paymentType,
+                        transactionStatus: transactionStatus,
+                    },
+                });
+                if (transactionStatus == 'SUCCESS')
+                    yield prisma.ticket.update({
+                        where: { id: ticketId },
+                        data: {
+                            stock: {
+                                decrement: quantity,
+                            },
+                        },
+                    });
+            }
+            catch (error) {
+                console.error('Error updating transaction status:', error);
+                res.status(500).send('Internal Server Error');
+            }
         });
     }
 }
