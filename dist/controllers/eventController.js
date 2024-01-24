@@ -8,13 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EventController = void 0;
 const client_1 = require("@prisma/client");
-const fs_1 = __importDefault(require("fs"));
 const prisma = new client_1.PrismaClient();
 class EventController {
     index(req, res) {
@@ -84,9 +80,6 @@ class EventController {
                         id: Number(id)
                     }
                 });
-                if (event.banner) {
-                    fs_1.default.unlinkSync(`./banners/${event.banner}`);
-                }
                 return res.status(200).json({
                     status: 'success',
                     message: 'Event deleted',

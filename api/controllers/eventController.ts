@@ -1,6 +1,5 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, Response } from "express";
-import fs from "fs";
 const prisma = new PrismaClient();
 
 export class EventController {
@@ -67,9 +66,6 @@ export class EventController {
      id: Number(id)
     }
    });
-   if (event.banner) {
-    fs.unlinkSync(`./banners/${event.banner}`);
-   }
    return res.status(200).json({
     status: 'success',
     message: 'Event deleted',
