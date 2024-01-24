@@ -41,7 +41,7 @@ export class TicketPurchaseController {
   }
   async Ewallet(req: Request, res: Response) {
     const ticketPurchaseId = req.params.ticketPurchaseId;  
-    const data = await prisma.ticketPurchase.findMany({
+    const data = await prisma.ticketPurchase.findUnique({
       where: {
         id: ticketPurchaseId,
       },
@@ -54,25 +54,25 @@ export class TicketPurchaseController {
     let parameter = {
       "payment_type": "gopay",
       "transaction_details": {
-          "gross_amount": data[0].totalPrice,
-          "order_id": data[0].id,
+          "gross_amount": data!.totalPrice,
+          "order_id": data!.id,
       },
       "gopay": {
           "enable_callback": true,                
           "callback_url": "http://localhost:3000/"  
       }, 
-      "item_details": data.map(item => ({
-        "id": item.id,
-        "price": item.Ticket.price,
-        "quantity": item.quantity,
-        "name": item.Ticket.name,
-      })),
-      "customer_details": data.map(item => ({
-        "first_name": item.Purchaser.firstName,
-        "last_name": item.Purchaser.lastName,
-        "email": item.Purchaser.email,
-        "phone": item.Purchaser.phone,
-      })),
+      "item_details": {
+        "id": data?.id,
+        "price": data?.Ticket.price,
+        "quantity": data?.quantity,
+        "name": data?.Ticket.name,
+      },
+      "customer_details": {
+        "first_name": data?.Purchaser.firstName,
+        "last_name": data?.Purchaser.lastName,
+        "email": data?.Purchaser.email,
+        "phone": data?.Purchaser.phone,
+      },
     };
 
     core.charge(parameter)
