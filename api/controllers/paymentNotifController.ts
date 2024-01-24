@@ -12,7 +12,35 @@ const prisma = new PrismaClient();
 
 export class PaymentNotifController {
 
- async notification(req: Request, res: Response) {
+async updateTransactionStatus(ticketPurchaseId: string, ticketId: number, quantity: number, paymentType: string, transactionStatus: string, res: Response) {
+  try {
+    await prisma.ticketPurchase.update({
+      where: { id: ticketPurchaseId },
+      data: {
+        paymentType: paymentType,
+        transactionStatus: transactionStatus as any,
+      },
+    });
+
+    if(transactionStatus == 'SUCCESS') {
+      await prisma.ticket.update({
+        where: { id: ticketId },
+        data: {
+          stock: {
+            decrement: quantity,
+          },
+        },
+      });
+    }
+
+    res.status(200).send('Ok');
+    } catch (error) {
+      console.error('Error updating transaction status:', error);
+      res.status(500).send('Internal Server Error');
+    }
+}
+
+notification: (req: Request, res: Response) => Promise<void> = async (req, res) => {
 
   const notificationJson = req.body;
 
@@ -28,85 +56,15 @@ export class PaymentNotifController {
       });
 
       if (transaction_status == 'capture' && fraud_status == 'accept') {
-        try {
-          await prisma.ticketPurchase.update({
-            where: { id: ticketPurchase!.id },
-            data: {
-              paymentType: payment_type,
-              transactionStatus: "SUCCESS",
-            },
-          });
-      
-            await prisma.ticket.update({
-              where: { id: ticketPurchase!.ticketId },
-              data: {
-                stock: {
-                  decrement: ticketPurchase!.quantity,
-                },
-              },
-            });
-      
-          } catch (error) {
-            console.error('Error updating transaction status:', error);
-            res.status(500).send('Internal Server Error');
-          }
-      return res.status(200).send('Ok');
+        await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "SUCCESS", res);
       } else if (transaction_status == 'settlement') {
-        try {
-          await prisma.ticketPurchase.update({
-            where: { id: ticketPurchase!.id },
-            data: {
-              paymentType: payment_type,
-              transactionStatus: "SUCCESS",
-            },
-          });
-      
-            await prisma.ticket.update({
-              where: { id: ticketPurchase!.ticketId },
-              data: {
-                stock: {
-                  decrement: ticketPurchase!.quantity,
-                },
-              },
-            });
-      
-          } catch (error) {
-            console.error('Error updating transaction status:', error);
-            res.status(500).send('Internal Server Error');
-          }
-        return res.status(200).send('Ok');
+        await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "SUCCESS", res);
       } else if (transaction_status == 'cancel' ||
         transaction_status == 'deny' ||
         transaction_status == 'expire') {
-          try {
-            await prisma.ticketPurchase.update({
-              where: { id: ticketPurchase!.id },
-              data: {
-                paymentType: payment_type,
-                transactionStatus: "FAILED",
-              },
-            });
-        
-            } catch (error) {
-              console.error('Error updating transaction status:', error);
-              res.status(500).send('Internal Server Error');
-            }
-        return res.status(200).send('Ok');
+          await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "FAILED", res);
       } else if (transaction_status == 'pending') {
-        try {
-          await prisma.ticketPurchase.update({
-            where: { id: ticketPurchase!.id },
-            data: {
-              paymentType: payment_type,
-              transactionStatus: "PENDING",
-            },
-          });
-
-          } catch (error) {
-            console.error('Error updating transaction status:', error);
-            res.status(500).send('Internal Server Error');
-          }
-          return res.status(200).send('Ok');
+        await this.updateTransactionStatus(ticketPurchase!.id, ticketPurchase!.ticketId, ticketPurchase!.quantity, payment_type, "PENDING", res);
       } 
     })
     .catch((error: any) => {

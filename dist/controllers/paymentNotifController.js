@@ -19,8 +19,8 @@ let apiClient = new midtransClient.Snap({
 });
 const prisma = new client_1.PrismaClient();
 class PaymentNotifController {
-    notification(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
+    constructor() {
+        this.notification = (req, res) => __awaiter(this, void 0, void 0, function* () {
             const notificationJson = req.body;
             apiClient.transaction.notification(notificationJson)
                 .then((statusResponse) => __awaiter(this, void 0, void 0, function* () {
@@ -30,92 +30,52 @@ class PaymentNotifController {
                     where: { id: order_id }
                 });
                 if (transaction_status == 'capture' && fraud_status == 'accept') {
-                    try {
-                        yield prisma.ticketPurchase.update({
-                            where: { id: ticketPurchase.id },
-                            data: {
-                                paymentType: payment_type,
-                                transactionStatus: "SUCCESS",
-                            },
-                        });
-                        yield prisma.ticket.update({
-                            where: { id: ticketPurchase.ticketId },
-                            data: {
-                                stock: {
-                                    decrement: ticketPurchase.quantity,
-                                },
-                            },
-                        });
-                    }
-                    catch (error) {
-                        console.error('Error updating transaction status:', error);
-                        res.status(500).send('Internal Server Error');
-                    }
-                    return res.status(200).send('Ok');
+                    yield this.updateTransactionStatus(ticketPurchase.id, ticketPurchase.ticketId, ticketPurchase.quantity, payment_type, "SUCCESS", res);
                 }
                 else if (transaction_status == 'settlement') {
-                    try {
-                        yield prisma.ticketPurchase.update({
-                            where: { id: ticketPurchase.id },
-                            data: {
-                                paymentType: payment_type,
-                                transactionStatus: "SUCCESS",
-                            },
-                        });
-                        yield prisma.ticket.update({
-                            where: { id: ticketPurchase.ticketId },
-                            data: {
-                                stock: {
-                                    decrement: ticketPurchase.quantity,
-                                },
-                            },
-                        });
-                    }
-                    catch (error) {
-                        console.error('Error updating transaction status:', error);
-                        res.status(500).send('Internal Server Error');
-                    }
-                    return res.status(200).send('Ok');
+                    yield this.updateTransactionStatus(ticketPurchase.id, ticketPurchase.ticketId, ticketPurchase.quantity, payment_type, "SUCCESS", res);
                 }
                 else if (transaction_status == 'cancel' ||
                     transaction_status == 'deny' ||
                     transaction_status == 'expire') {
-                    try {
-                        yield prisma.ticketPurchase.update({
-                            where: { id: ticketPurchase.id },
-                            data: {
-                                paymentType: payment_type,
-                                transactionStatus: "FAILED",
-                            },
-                        });
-                    }
-                    catch (error) {
-                        console.error('Error updating transaction status:', error);
-                        res.status(500).send('Internal Server Error');
-                    }
-                    return res.status(200).send('Ok');
+                    yield this.updateTransactionStatus(ticketPurchase.id, ticketPurchase.ticketId, ticketPurchase.quantity, payment_type, "FAILED", res);
                 }
                 else if (transaction_status == 'pending') {
-                    try {
-                        yield prisma.ticketPurchase.update({
-                            where: { id: ticketPurchase.id },
-                            data: {
-                                paymentType: payment_type,
-                                transactionStatus: "PENDING",
-                            },
-                        });
-                    }
-                    catch (error) {
-                        console.error('Error updating transaction status:', error);
-                        res.status(500).send('Internal Server Error');
-                    }
-                    return res.status(200).send('Ok');
+                    yield this.updateTransactionStatus(ticketPurchase.id, ticketPurchase.ticketId, ticketPurchase.quantity, payment_type, "PENDING", res);
                 }
             }))
                 .catch((error) => {
                 console.error('Error processing notification:', error);
                 res.status(500).send('Internal Server Error');
             });
+        });
+    }
+    updateTransactionStatus(ticketPurchaseId, ticketId, quantity, paymentType, transactionStatus, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                yield prisma.ticketPurchase.update({
+                    where: { id: ticketPurchaseId },
+                    data: {
+                        paymentType: paymentType,
+                        transactionStatus: transactionStatus,
+                    },
+                });
+                if (transactionStatus == 'SUCCESS') {
+                    yield prisma.ticket.update({
+                        where: { id: ticketId },
+                        data: {
+                            stock: {
+                                decrement: quantity,
+                            },
+                        },
+                    });
+                }
+                res.status(200).send('Ok');
+            }
+            catch (error) {
+                console.error('Error updating transaction status:', error);
+                res.status(500).send('Internal Server Error');
+            }
         });
     }
 }
