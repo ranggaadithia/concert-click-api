@@ -1,13 +1,17 @@
-import multer from "multer";
-import path from "path";
-const storage = multer.diskStorage({
- destination: function (req, file, cb) {
-   cb(null, path.join(process.cwd(), 'banners'))
- },
- filename: function (req, file, cb) {
-   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-   cb(null, file.fieldname+ '-' +uniqueSuffix + '-' + file.originalname)
- }
+const Multer = require('multer')
+const FirebaseStorage = require('multer-firebase-storage')
+
+const multer = Multer({
+  storage: FirebaseStorage({
+    bucketName: process.env.FIREBASE_BUCKET_NAME,
+    credentials: {
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY,
+      projectId: process.env.FIREBASE_PROJECT_ID
+    },
+    unique: true,
+    public: true
+  })
 })
 
-export const upload = multer({storage})
+export default multer;

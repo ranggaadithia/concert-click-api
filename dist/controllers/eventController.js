@@ -39,12 +39,12 @@ class EventController {
         });
     }
     create(req, res) {
-        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             const { name, description, artists, locationName, locationUrl, dateStart, dateEnd, timeStart, timeEnd } = req.body;
             try {
                 const organizerId = req.body.user.id; // auth user
-                const banner = (_a = req === null || req === void 0 ? void 0 : req.file) === null || _a === void 0 ? void 0 : _a.filename;
+                const reqfile = req.file;
+                const banner = reqfile.publicUrl;
                 const event = yield prisma.event.create({
                     data: {
                         name,
