@@ -27,6 +27,23 @@ app.use('/buyer', purchaserRouter());
 app.use('/buy', ticketPurchaseRoutes());
 app.use('/notification', paymentNotificationRoutes());
 
+var serviceAccount = require("../serviceAccountKey.json");
+var admin = require("firebase-admin");
+app.get('/upload', (req, res) => {
+  admin.initializeApp({
+      credential: admin.credential.cert(serviceAccount),
+      storageBucket: "gs://concert-click.appspot.com"
+  });
+  var bucket = admin.storage().bucket();
+  bucket.upload("/Users/agusr/Downloads/imgjy.png")
+  res.send("Uploaded!");
+});
+
+
+
+
+
+
 
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
