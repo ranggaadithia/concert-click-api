@@ -73,7 +73,7 @@ class PaymentNotifController {
                     console.log(`Unhandled transaction status: ${transaction_status}`);
                     res.status(400).send('Invalid transaction status.');
                 }
-            }))
+            })).bind(this)
                 .catch((error) => {
                 console.error('Error processing notification:', error);
                 res.status(500).send('Internal Server Error');

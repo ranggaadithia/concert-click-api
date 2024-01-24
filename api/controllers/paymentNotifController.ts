@@ -67,11 +67,12 @@ async updateTransactionStatus(ticketPurchaseId: string, ticketId: number, quanti
         console.log(`Unhandled transaction status: ${transaction_status}`);
         res.status(400).send('Invalid transaction status.');
       }
-    })
+    }).bind(this)
     .catch((error: any) => {
       console.error('Error processing notification:', error);
       res.status(500).send('Internal Server Error');
     });
+    
  }
  
 }
