@@ -28,7 +28,8 @@ export class EventController {
   const { name, description, artists, locationName, locationUrl, dateStart, dateEnd, timeStart, timeEnd } = req.body;
   try {
    const organizerId = req.body.user.id; // auth user
-   const banner = req?.file?.filename;
+   const reqfile = req.file as any
+   const banner = reqfile.publicUrl;
    const event = await prisma.event.create({
     data: {
      name,
