@@ -5,6 +5,7 @@ import { ticketRouter } from './routes/ticketRoutes';
 import { purchaserRouter } from './routes/purchaserRoutes';
 import { ticketPurchaseRoutes } from './routes/ticketPurchaseRoutes';
 import { paymentNotificationRoutes } from './routes/paymentNotifRoutes';
+import { homePageRoutes } from './routes/homePageRoutes';
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/ticket', ticketRouter());
 app.use('/buyer', purchaserRouter());
 app.use('/buy', ticketPurchaseRoutes());
 app.use('/notification', paymentNotificationRoutes());
+app.use('/homepage', homePageRoutes());
 
 
 

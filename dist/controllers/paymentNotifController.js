@@ -60,14 +60,39 @@ class PaymentNotifController {
                     },
                 });
                 if (transactionStatus == 'SUCCESS') {
-                    yield prisma.ticket.update({
-                        where: { id: ticketId },
-                        data: {
-                            stock: {
-                                decrement: quantity,
-                            },
-                        },
-                    });
+                    try {
+                        yield prisma.$transaction((prismaTransaction) => __awaiter(this, void 0, void 0, function* () {
+                            // Update ticket stock
+                            yield prismaTransaction.ticket.update({
+                                where: { id: ticketId },
+                                data: {
+                                    stock: {
+                                        decrement: quantity,
+                                    },
+                                },
+                            });
+                            // Get eventId from the ticket
+                            const ticket = yield prismaTransaction.ticket.findUnique({
+                                where: { id: ticketId },
+                                select: {
+                                    eventId: true,
+                                },
+                            });
+                            // Update event ticketSales
+                            yield prismaTransaction.event.update({
+                                where: { id: ticket === null || ticket === void 0 ? void 0 : ticket.eventId },
+                                data: {
+                                    ticketSales: {
+                                        increment: quantity,
+                                    },
+                                },
+                            });
+                        }));
+                    }
+                    catch (error) {
+                        console.error('Error updating ticket or event:', error);
+                        res.status(500).send('Internal Server Error');
+                    }
                 }
                 res.status(200).send('Ok');
             }

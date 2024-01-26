@@ -35,11 +35,12 @@ model Event {
   organizerId  Int
   locationName String?
   locationUrl  String?
+  ticketSales  Int       @default(0)
   dateStart    DateTime? @default(now()) @db.Date
   dateEnd      DateTime? @default(now()) @db.Date
   timeStart    DateTime? @default(now()) @db.Time
   timeEnd      DateTime? @default(now()) @db.Time
-  organizer    Organizer @relation(fields: [organizerId], references: [id])
+  organizer    Organizer @relation(fields: [organizerId], references: [id], onDelete: Cascade)
   createdAt    DateTime  @default(now())
   Ticket       Ticket[]
 }
@@ -54,7 +55,7 @@ model Ticket {
   eventId        Int
   startSale      DateTime         @default(now()) //@db.DateTime()
   endSale        DateTime?        @default(now()) //@db.DateTime()
-  Event          Event            @relation(fields: [eventId], references: [id])
+  Event          Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
   createdAt      DateTime         @default(now())
   TicketPurchase TicketPurchase[]
 }
@@ -90,8 +91,8 @@ model TicketPurchase {
   totalPrice        Int
   paymentType       String?
   transactionStatus TransactionStatus @default(PENDING)
-  Purchaser         Purchaser         @relation(fields: [purchaserId], references: [id])
-  Ticket            Ticket            @relation(fields: [ticketId], references: [id])
+  Purchaser         Purchaser         @relation(fields: [purchaserId], references: [id], onDelete: Cascade)
+  Ticket            Ticket            @relation(fields: [ticketId], references: [id], onDelete: Cascade)
   createdAt         DateTime          @default(now())
 }
 

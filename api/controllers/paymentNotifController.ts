@@ -22,16 +22,45 @@ async updateTransactionStatus(ticketPurchaseId: string, ticketId: number, quanti
       },
     });
 
-    if(transactionStatus == 'SUCCESS') {
-      await prisma.ticket.update({
-        where: { id: ticketId },
-        data: {
-          stock: {
-            decrement: quantity,
-          },
-        },
-      });
-    }
+    if (transactionStatus == 'SUCCESS') {
+      try {
+         await prisma.$transaction(async (prismaTransaction) => {
+            // Update ticket stock
+            await prismaTransaction.ticket.update({
+               where: { id: ticketId },
+               data: {
+                  stock: {
+                     decrement: quantity,
+                  },
+               },
+            });
+   
+            // Get eventId from the ticket
+            const ticket = await prismaTransaction.ticket.findUnique({
+               where: { id: ticketId },
+               select: {
+                  eventId: true,
+               },
+            });
+   
+            // Update event ticketSales
+            await prismaTransaction.event.update({
+               where: { id: ticket?.eventId },
+               data: {
+                  ticketSales: {
+                     increment: quantity,
+                  },
+               },
+            });
+         });
+      } catch (error) {
+         console.error('Error updating ticket or event:', error);
+         res.status(500).send('Internal Server Error');
+      }
+   }
+   
+   
+   
 
     res.status(200).send('Ok');
     } catch (error) {
