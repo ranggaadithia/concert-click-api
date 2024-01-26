@@ -87,7 +87,7 @@ export class PaymentController {
     maxBodyLength: Infinity,
       url: process.env.MIDTRANS_VA_URL,
       headers: { 
-        'Authorization': process.env.MIDTRANS_SERVER_KEY,
+        'Authorization': process.env.MIDTRANS_AUTH,
       },
       data : dataVirtualAccount
     };
