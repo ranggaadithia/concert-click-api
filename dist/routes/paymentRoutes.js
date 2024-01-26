@@ -10,6 +10,7 @@ const paymentController = new paymentController_1.PaymentController();
 const router = express_1.default.Router();
 const paymentRoutes = () => {
     router.get('/e-wallet/:ticketPurchaseId', paymentController.Ewallet);
+    router.get('/virtual-account/:bank/:ticketPurchaseId', paymentController.VirtualAccount);
     return router;
 };
 exports.paymentRoutes = paymentRoutes;
