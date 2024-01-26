@@ -9,6 +9,5 @@ export const ticketPurchaseRoutes = () => {
 
   router.post('/', checkPurchaser, ticketPurchaseController.createTicketPurchase);
 
-  router.get('/e-wallet/:ticketPurchaseId', ticketPurchaseController.Ewallet);
   return router;
 }

@@ -6,6 +6,7 @@ import { purchaserRouter } from './routes/purchaserRoutes';
 import { ticketPurchaseRoutes } from './routes/ticketPurchaseRoutes';
 import { paymentNotificationRoutes } from './routes/paymentNotifRoutes';
 import { homePageRoutes } from './routes/homePageRoutes';
+import { paymentRoutes } from './routes/paymentRoutes';
 
 const app = express();
 
@@ -26,8 +27,15 @@ app.use('/event', eventRouter());
 app.use('/ticket', ticketRouter());
 app.use('/buyer', purchaserRouter());
 app.use('/buy', ticketPurchaseRoutes());
+app.use('/pay', paymentRoutes());
 app.use('/notification', paymentNotificationRoutes());
 app.use('/homepage', homePageRoutes());
+app.get('/success', (req: Request, res: Response) => {
+  res.send({
+   status: 'success',
+   message: 'Payment Success!',
+  });
+});
 
 
 

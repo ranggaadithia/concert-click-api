@@ -11,6 +11,7 @@ const purchaserRoutes_1 = require("./routes/purchaserRoutes");
 const ticketPurchaseRoutes_1 = require("./routes/ticketPurchaseRoutes");
 const paymentNotifRoutes_1 = require("./routes/paymentNotifRoutes");
 const homePageRoutes_1 = require("./routes/homePageRoutes");
+const paymentRoutes_1 = require("./routes/paymentRoutes");
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
@@ -27,7 +28,14 @@ app.use('/event', (0, eventRoutes_1.eventRouter)());
 app.use('/ticket', (0, ticketRoutes_1.ticketRouter)());
 app.use('/buyer', (0, purchaserRoutes_1.purchaserRouter)());
 app.use('/buy', (0, ticketPurchaseRoutes_1.ticketPurchaseRoutes)());
+app.use('/pay', (0, paymentRoutes_1.paymentRoutes)());
 app.use('/notification', (0, paymentNotifRoutes_1.paymentNotificationRoutes)());
 app.use('/homepage', (0, homePageRoutes_1.homePageRoutes)());
+app.get('/success', (req, res) => {
+    res.send({
+        status: 'success',
+        message: 'Payment Success!',
+    });
+});
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));
 //# sourceMappingURL=index.js.map

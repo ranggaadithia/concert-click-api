@@ -11,7 +11,6 @@ const router = express_1.default.Router();
 const ticketPurchaseController = new ticketPurchaseController_1.TicketPurchaseController();
 const ticketPurchaseRoutes = () => {
     router.post('/', checkPurchaserMiddleware_1.checkPurchaser, ticketPurchaseController.createTicketPurchase);
-    router.get('/e-wallet/:ticketPurchaseId', ticketPurchaseController.Ewallet);
     return router;
 };
 exports.ticketPurchaseRoutes = ticketPurchaseRoutes;

@@ -11,7 +11,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TicketPurchaseController = void 0;
 const client_1 = require("@prisma/client");
-const midtransPayment_1 = require("../utility/midtransPayment");
 const uuid_1 = require("uuid");
 const prisma = new client_1.PrismaClient();
 class TicketPurchaseController {
@@ -46,47 +45,6 @@ class TicketPurchaseController {
                 res.status(400).json(err);
                 console.log(err);
             }
-        });
-    }
-    Ewallet(req, res) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const ticketPurchaseId = req.params.ticketPurchaseId;
-            const data = yield prisma.ticketPurchase.findUnique({
-                where: {
-                    id: ticketPurchaseId,
-                },
-                include: {
-                    Ticket: true,
-                    Purchaser: true,
-                }
-            });
-            let parameter = {
-                "payment_type": "gopay",
-                "transaction_details": {
-                    "gross_amount": data.totalPrice,
-                    "order_id": data.id,
-                },
-                "gopay": {
-                    "enable_callback": true,
-                    "callback_url": "http://localhost:3000/"
-                },
-                "item_details": {
-                    "id": data === null || data === void 0 ? void 0 : data.id,
-                    "price": data === null || data === void 0 ? void 0 : data.Ticket.price,
-                    "quantity": data === null || data === void 0 ? void 0 : data.quantity,
-                    "name": data === null || data === void 0 ? void 0 : data.Ticket.name,
-                },
-                "customer_details": {
-                    "first_name": data === null || data === void 0 ? void 0 : data.Purchaser.firstName,
-                    "last_name": data === null || data === void 0 ? void 0 : data.Purchaser.lastName,
-                    "email": data === null || data === void 0 ? void 0 : data.Purchaser.email,
-                    "phone": data === null || data === void 0 ? void 0 : data.Purchaser.phone,
-                },
-            };
-            midtransPayment_1.core.charge(parameter)
-                .then((chargeResponse) => {
-                return res.json(chargeResponse);
-            });
         });
     }
 }
