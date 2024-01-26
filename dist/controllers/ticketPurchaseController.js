@@ -39,7 +39,11 @@ class TicketPurchaseController {
                         totalPrice,
                     }
                 });
-                res.status(201).json(TicketPurchase);
+                res.status(201).send({
+                    status: 'success',
+                    message: 'Ticket purchase created',
+                    data: TicketPurchase,
+                });
             }
             catch (err) {
                 res.status(400).json(err);

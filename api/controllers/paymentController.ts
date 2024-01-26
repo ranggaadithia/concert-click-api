@@ -85,9 +85,9 @@ export class PaymentController {
     let config = {
     method: 'post',
     maxBodyLength: Infinity,
-      url: 'https://api.sandbox.midtrans.com/v2/charge',
+      url: process.env.MIDTRANS_VA_URL,
       headers: { 
-        'Authorization': 'Basic U0ItTWlkLXNlcnZlci1ENWRMM25ybThaeU5Xall1cndxU3ZHSmg=:'
+        'Authorization': process.env.MIDTRANS_SERVER_KEY,
       },
       data : dataVirtualAccount
     };

@@ -1,6 +1,5 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import { core } from '../utility/midtransPayment';
 import { v4 as uuidv4} from 'uuid';
 
 const prisma = new PrismaClient();
@@ -33,7 +32,11 @@ export class TicketPurchaseController {
           totalPrice,
         }
       });
-      res.status(201).json(TicketPurchase);
+      res.status(201).send({
+        status: 'success',
+        message: 'Ticket purchase created',
+        data: TicketPurchase,
+      });
     } catch (err) {
       res.status(400).json(err);
       console.log(err);
